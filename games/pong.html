@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pong</title>
+<style>
+  body{margin:0;background:#0e1016;color:#e9ecf2;font:15px system-ui,sans-serif;
+       display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh}
+  canvas{background:#11131a;border:1px solid #2d3342;border-radius:8px;max-width:95vw}
+  p{color:#9aa3b5;font-size:13px}
+</style>
+</head>
+<body>
+<canvas id="c" width="640" height="400"></canvas>
+<p>Move your mouse to control the left paddle.</p>
+<script>
+const c = document.getElementById('c'), x = c.getContext('2d');
+let py = 160, ay = 160, bx = 320, by = 200, vx = 4, vy = 3, you = 0, cpu = 0;
+c.addEventListener('mousemove', e => {
+  const r = c.getBoundingClientRect();
+  py = (e.clientY - r.top) * (c.height / r.height) - 40;
+});
+function loop() {
+  ay += Math.max(-4, Math.min(4, (by - 40) - ay));
+  bx += vx; by += vy;
+  if (by < 5 || by > 395) vy = -vy;
+  if (bx < 20 && by > py && by < py + 80) vx = Math.abs(vx) + 0.2;
+  if (bx > 620 && by > ay && by < ay + 80) vx = -Math.abs(vx) - 0.2;
+  if (bx < 0) { cpu++; bx = 320; by = 200; vx = 4; }
+  if (bx > 640) { you++; bx = 320; by = 200; vx = -4; }
+  x.clearRect(0, 0, 640, 400);
+  x.fillStyle = '#6ea8fe';
+  x.fillRect(8, py, 10, 80);
+  x.fillStyle = '#e9ecf2';
+  x.fillRect(622, ay, 10, 80);
+  x.beginPath(); x.arc(bx, by, 6, 0, 7); x.fill();
+  x.font = '20px system-ui'; x.fillStyle = '#9aa3b5';
+  x.fillText(you + ' : ' + cpu, 295, 30);
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>
